@@ -1,0 +1,46 @@
+version: "3.1"
+services:
+  testproject-agent-1:
+    image: testproject/agent:latest
+    container_name: testproject-agent-1
+    depends_on:
+      - chrome
+      - firefox
+    environment:
+      TP_API_KEY: $TP_API_KEY
+      TP_SDK_PORT: "8686"             # Agent will listen on port 8686 for SDK connections
+      CHROME: "chrome:4444"           # Address for Agent to communicate with Chrome browser
+      CHROME_EXT: "localhost:5555"    # Address for accessing the Chrome Selenium server
+      FIREFOX: "firefox:4444"         # Address for Agent to communicate with Firefox browser
+      FIREFOX_EXT: "localhost:5556"   # Address for accessing the Firefox Selenium server
+    ports:
+        - "8585:8585"
+        - "8686:8686"                     # Expose port for SDK<->Agent communication
+  testproject-agent-2:
+    image: testproject/agent:latest
+    container_name: testproject-agent-2
+    depends_on:
+        - chrome
+        - firefox
+    environment:
+        TP_API_KEY: $TP_API_KEY
+        TP_SDK_PORT: "8787"             # Agent will listen on port 8686 for SDK connections
+        CHROME: "chrome:4444"           # Address for Agent to communicate with Chrome browser
+        CHROME_EXT: "localhost:5555"    # Address for accessing the Chrome Selenium server
+        FIREFOX: "firefox:4444"         # Address for Agent to communicate with Firefox browser
+        FIREFOX_EXT: "localhost:5556"   # Address for accessing the Firefox Selenium server
+    ports:
+        - "8888:8585"
+        - "8787:8686"                     # Expose port for SDK<->Agent communication
+  chrome:
+    image: selenium/standalone-chrome
+    volumes:
+        - /dev/shm:/dev/shm
+    ports:
+    - "5555:4444"                     # Expose Selenium on port 5555
+  firefox:
+    image: selenium/standalone-firefox
+    volumes:
+      - /dev/shm:/dev/shm
+    ports:
+    - "5556:4444"                     # Expose Selenium on port 5556
